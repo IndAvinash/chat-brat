@@ -22,7 +22,8 @@ const styles = `
     overflow: hidden;
     border-bottom: 1px solid var(--border);
     padding: 0 32px;
-    height: 68px;
+    height: 10vh;
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -307,15 +308,14 @@ interface PageHeaderProps {
   userInitials?: string;
   activeNav?: NavItem;
   onNavChange?: (item: NavItem) => void;
-  notificationCount?: number;
+  onLogout?: () => void;
 }
-
 export default function PageHeader({
   userName = "U",
   userInitials,
   activeNav = "Chat",
   onNavChange,
-  notificationCount = 0,
+  onLogout,
 }: PageHeaderProps) {
   const [active, setActive] = useState<NavItem>(activeNav);
   const [mounted, setMounted] = useState(false);
@@ -327,6 +327,10 @@ export default function PageHeader({
   const navItems: NavItem[] = ["Chat", "Log Out", "History"];
 
   const handleNav = (item: NavItem) => {
+    if (item === "Log Out") {      
+        onLogout?.();
+        return;
+    }
     setActive(item);
     onNavChange?.(item);
   };

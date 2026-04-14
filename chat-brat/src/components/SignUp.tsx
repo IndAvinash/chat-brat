@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Branding } from "./Header";
 import { Link } from "react-router-dom";
+import { signup } from "../services/api";
+import { useNavigate } from "react-router-dom";
+
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
 
@@ -289,6 +292,7 @@ interface SignUpProps {
 
 export default function SignUp({ onSignUp }: SignUpProps) {
   const [name, setName] = useState("");
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -323,15 +327,15 @@ export default function SignUp({ onSignUp }: SignUpProps) {
     setErrors(e);
     return Object.keys(e).length === 0;
   };
-
   const handleSubmit = async () => {
     if (!validate()) return;
     setLoading(true);
     try {
-      await onSignUp?.(name, email, password);
-      showToast("Account created");
-    } catch {
-      showToast("Something went wrong");
+      await signup({ name, email, password });
+      showToast("Account created! Redirecting to login...");
+      setTimeout(() => navigate('/login'), 1500);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Signup failed");
     } finally {
       setLoading(false);
     }

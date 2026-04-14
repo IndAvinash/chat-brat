@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Branding } from "./Header";
 import { Link } from "react-router-dom";
+import { login } from "../services/api";
+import { useNavigate } from "react-router-dom";
+
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
 
@@ -223,22 +226,21 @@ interface LoginProps {
 }
 
 export default function Login({ onLogin, onForgotPassword }: LoginProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPass, setShowPass] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  const [toast, setToast] = useState<string | null>(null);
-  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const showToast = (msg: string) => {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPass, setShowPass] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+    const [toast, setToast] = useState<string | null>(null);
+    const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const showToast = (msg: string) => {
     setToast(msg);
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(null), 3000);
   };
 
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
-
   const validate = () => {
     const e: typeof errors = {};
     if (!email.trim()) e.email = "Email is required";
@@ -249,14 +251,18 @@ export default function Login({ onLogin, onForgotPassword }: LoginProps) {
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = async () => {
+ const handleSubmit = async () => {
     if (!validate()) return;
     setLoading(true);
     try {
-      await onLogin?.(email, password);
-      showToast("Welcome back");
-    } catch {
-      showToast("Wrong email or password");
+      const response = await login({ email, password });
+      // Store token in localStorage
+      localStorage.setItem('token', response.token || '');
+      localStorage.setItem('user', JSON.stringify(response.user));
+      showToast("Welcome back!");
+      setTimeout(() => navigate('/chat'), 500);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Login failed");
     } finally {
       setLoading(false);
     }

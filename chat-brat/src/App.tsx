@@ -6,8 +6,7 @@ import Chat from "./components/Chat";
 import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { verifyToken } from "./services/api";
-
-// Create a separate component that uses useNavigate
+import './App.css';
 function AppContent() {
   const [authChecked, setAuthChecked] = useState(false);
   const navigate = useNavigate();
@@ -29,26 +28,22 @@ function AppContent() {
     checkAuth();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
+ 
 
   if (!authChecked) return <div>Loading...</div>;
 
   return (
     <Routes>
       <Route path="/" element={<ProtectedRoute>
-            <Header onLogout={handleLogout} /><Chat />
+            <Header  /><Chat />
           </ProtectedRoute>} />
-      <Route path="/login" element={<><Header onLogout={handleLogout} /><Login /></>} />
-      <Route path="/signup" element={<><Header onLogout={handleLogout} /><SignUp /></>} />
+      <Route path="/login" element={<><Header  /><Login /></>} />
+      <Route path="/signup" element={<><Header  /><SignUp /></>} />
       <Route
         path="/chat"
         element={
           <ProtectedRoute>
-            <Header onLogout={handleLogout} /><Chat />
+            <Header  /><Chat />
           </ProtectedRoute>
         }
       />

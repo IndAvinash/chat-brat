@@ -29,13 +29,13 @@ const login = async (req, res) => {
     // Find user by email
     const user = await User.findByEmail(email);
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "This email is not registered" });
     }
     
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.pass);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid Email or Password" });
     }
     
     // Generate JWT token

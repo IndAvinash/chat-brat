@@ -14,8 +14,8 @@ const chat = async (req, res) => {
         parts: [{ text: h.content }],
       })),
       generationConfig: {
-        maxOutputTokens: 1000,
-        temperature: 0.7,
+        maxOutputTokens: 5000,
+        temperature: 1.0,
       },
     });
     

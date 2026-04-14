@@ -1,8 +1,8 @@
-const API_BASE_URL = 'http://localhost:8080/auth';
+const API_BASE_URL = 'http://localhost:8080';
 
 export const verifyToken = async (token: string): Promise<boolean> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/verify`, {
+    const response = await fetch(`${API_BASE_URL}/auth/verify`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -36,7 +36,7 @@ export interface AuthResponse {
 }
 
 export const signup = async (data: SignupData): Promise<AuthResponse> => {
-  const response = await fetch(`${API_BASE_URL}/signup`, {
+  const response = await fetch(`${API_BASE_URL}/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -51,7 +51,7 @@ export const signup = async (data: SignupData): Promise<AuthResponse> => {
 };
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
-  const response = await fetch(`${API_BASE_URL}/login`, {
+  const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -92,6 +92,11 @@ export const makeAuthenticatedRequest = async (endpoint: string, options: Reques
     const error = await response.json();
     throw new Error(error.error || 'Request failed');
   }
-
   return response.json();
+};
+export const sendChatMessage = async (message: string, history: Array<{role: string, content: string}> = []) => {
+  return makeAuthenticatedRequest('/chat/message', {
+    method: 'POST',
+    body: JSON.stringify({ message, history }),
+  });
 };

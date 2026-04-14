@@ -39,7 +39,9 @@ function AppContent() {
 
   return (
     <Routes>
-      <Route path="/" element={<><Header onLogout={handleLogout} /><Login /></>} />
+      <Route path="/" element={<ProtectedRoute>
+            <Header onLogout={handleLogout} /><Chat />
+          </ProtectedRoute>} />
       <Route path="/login" element={<><Header onLogout={handleLogout} /><Login /></>} />
       <Route path="/signup" element={<><Header onLogout={handleLogout} /><SignUp /></>} />
       <Route

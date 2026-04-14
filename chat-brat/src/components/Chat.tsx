@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
+import { sendChatMessage } from "../services/api";
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
 
@@ -376,44 +376,37 @@ export default function Chat({ userName = "You" }: ChatProps) {
 
     setMessages(prev => [...prev, userMsg]);
     setInput("");
-    if (textareaRef.current) textareaRef.current.style.height = "auto";
-    setLoading(true);
-
+   if (textareaRef.current) textareaRef.current.style.height = "auto";
+  setLoading(true);
     try {
-      const history = [...messages, userMsg].map(m => ({
-        role: m.role === "ai" ? "assistant" : "user",
-        content: m.text,
-      }));
+    const history = messages.map(m => ({
+      role: m.role === "ai" ? "assistant" : "user",
+      content: m.text,
+    }));
 
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: "You are chat-brat — a sharp, witty, and direct AI assistant. You give honest, no-fluff answers. Be concise but thorough. No corporate speak.",
-          messages: history,
-        }),
-      });
-
-      const data = await res.json();
-      const aiText =
-        data?.content?.map((b: { type: string; text?: string }) => b.type === "text" ? b.text : "").join("") ||
-        "Something went wrong. Try again.";
-
-      setMessages(prev => [
-        ...prev,
-        { id: crypto.randomUUID(), role: "ai", text: aiText, time: getTime() },
-      ]);
-    } catch {
-      setMessages(prev => [
-        ...prev,
-        { id: crypto.randomUUID(), role: "ai", text: "Connection error. Try again.", time: getTime() },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const response = await sendChatMessage(trimmed, history);
+    
+    const aiMsg: Message = {
+      id: crypto.randomUUID(),
+      role: "ai",
+      text: response.response,
+      time: getTime(),
+    };
+    
+    setMessages(prev => [...prev, aiMsg]);
+  } catch (error) {
+    console.error('Chat error:', error);
+    const errorMsg: Message = {
+      id: crypto.randomUUID(),
+      role: "ai",
+      text: "Sorry, I encountered an error. Please try again.",
+      time: getTime(),
+    };
+    setMessages(prev => [...prev, errorMsg]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {

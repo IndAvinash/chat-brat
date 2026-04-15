@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { sendChatMessage } from "../services/api";
-
+import Markdown from "react-markdown";
 
 interface Message {
   id: string;
@@ -117,7 +117,7 @@ export default function Chat({ userName = "You" }: ChatProps) {
             {messages.map(msg => (
               <div key={msg.id} className={`msg-row ${msg.role}`}>
                 <span className="msg-sender">{msg.role === "user" ? userName : "chat-brat"}</span>
-                <div className="msg-bubble">{msg.text}</div>
+                <div className="msg-bubble"><Markdown>{msg.text}</Markdown></div>
                 <span className="msg-time">{msg.time}</span>
               </div>
             ))}

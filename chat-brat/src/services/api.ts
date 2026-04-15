@@ -7,6 +7,7 @@ export const verifyToken = async (token: string): Promise<boolean> => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
+        email: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).email : '', 
       },
     });
     return response.ok;
@@ -76,6 +77,7 @@ export const makeAuthenticatedRequest = async (endpoint: string, options: Reques
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
+      email: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).email : '',
       ...options.headers,
     },
   });

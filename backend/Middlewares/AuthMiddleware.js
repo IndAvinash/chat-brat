@@ -1,14 +1,15 @@
 const jwt = require('jsonwebtoken');
-
-const authenticateToken = (req, res, next) => {
+const User = require('../Models/User');
+const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Extract Bearer token
-
+  const email = req.headers['email']; // Extract email from headers
+  const pass = await User.getPass(email);
   if (!token) {
     return res.status(401).json({ error: 'Access token required' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
+  jwt.verify(token, pass, (err, user) => {
     if (err) {
       if (err.name === 'TokenExpiredError') {
         return res.status(403).json({ error: 'Token expired' });

@@ -43,7 +43,6 @@ export default function SignUp({ onSignUp }: SignUpProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const strength = getStrength(password);
 
   const showToast = (msg: string) => {
@@ -141,7 +140,6 @@ export default function SignUp({ onSignUp }: SignUpProps) {
                 />
                 <button className="field-eye" type="button" onClick={() => setShowPass(s => !s)} tabIndex={-1}>
                   {showPass ? (
-                    // read from assets/off.svg
                    <img src="./src/assets/off.svg" alt="Hide password" />
                   ) : (
                    // read from assets/on.svg

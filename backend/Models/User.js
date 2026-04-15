@@ -5,7 +5,10 @@ class User {
     const [rows] = await db.execute('SELECT * FROM user WHERE email = ?', [email]);
     return rows[0];
   }
-
+  static async getPass(email) {
+    const [rows] = await db.execute('SELECT pass FROM user WHERE email = ?', [email]);
+    return rows[0] ? rows[0].pass : null;
+  }
   static async create(userData) {
     const { name, email, password } = userData;
     const [result] = await db.execute(

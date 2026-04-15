@@ -9,7 +9,7 @@ import { verifyToken } from "./services/api";
 import './App.css';
 function AppContent() {
   const [authChecked, setAuthChecked] = useState(false);
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     const checkAuth = async () => {

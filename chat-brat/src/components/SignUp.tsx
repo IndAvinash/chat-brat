@@ -26,11 +26,9 @@ const strengthLabel: Record<Strength, string> = {
   3: "Strong",
 };
 
-interface SignUpProps {
-  onSignUp?: (name: string, email: string, password: string) => Promise<void> | void;
-}
 
-export default function SignUp({ onSignUp }: SignUpProps) {
+
+export default function SignUp() {
   const [name, setName] = useState("");
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
